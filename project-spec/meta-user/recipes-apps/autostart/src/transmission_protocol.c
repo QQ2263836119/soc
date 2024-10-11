@@ -287,6 +287,7 @@ void fd_to_data_frames(int fd, data_frame_t *data_frames, n_frame_t n_frame) {
  *  output = input
  *  bias = 0
  */
+#define max(a, b) ((a) > (b) ? (a) : (b))
 void entropy_to_gmm(int16_t *entropy_addr, gmm_t *gmm, size_t len) {
 	for (size_t i = 0; i < len; i++) {
 		gmm[i].mean1 = entropy_addr[i * 9];
@@ -298,6 +299,10 @@ void entropy_to_gmm(int16_t *entropy_addr, gmm_t *gmm, size_t len) {
 		gmm[i].prob1 = entropy_addr[i * 9 + 6];
 		gmm[i].prob2 = entropy_addr[i * 9 + 7];
 		gmm[i].prob3 = entropy_addr[i * 9 + 8];
+
+    gmm[i].std1 = max(1,abs(gmm[i].std1));
+    gmm[i].std2 = max(1,abs(gmm[i].std2));
+    gmm[i].std3 = max(1,abs(gmm[i].std3));
 	}
   syslog(LOG_NOTICE, "success to convert entropy to gmm");
 }
